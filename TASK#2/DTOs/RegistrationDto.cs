@@ -1,0 +1,8 @@
+﻿namespace TASK_2.DTOs
+{
+    public class RegistrationDto
+    {
+        public string Username { get; set; }
+        public string Email { get; set; }
+    }
+}
