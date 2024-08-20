@@ -24,7 +24,8 @@ namespace TASK_2.Services
             // Validate input data
             if (string.IsNullOrEmpty(registrationRequest.Username) ||
                 string.IsNullOrEmpty(registrationRequest.Password) ||
-                string.IsNullOrEmpty(registrationRequest.Email))
+                string.IsNullOrEmpty(registrationRequest.Email) ||
+                string.IsNullOrEmpty(registrationRequest.Role))
             {
                 return new OperationResult<RegistrationDto>(400, "Username, password, and email are required.");
             }
@@ -59,11 +60,17 @@ namespace TASK_2.Services
                 return new OperationResult<RegistrationDto>(409, "Email already in use.");
             }
 
+            if (!Enum.TryParse<UserRole>(registrationRequest.Role, true, out var userRole))
+            {
+                return new OperationResult<RegistrationDto>(400, "Invalid role selected.");
+            }
+
             var registration = new Registration
             {
                 Username = registrationRequest.Username,
                 Password = BCrypt.Net.BCrypt.HashPassword(registrationRequest.Password),
-                Email = registrationRequest.Email
+                Email = registrationRequest.Email,
+                Role = userRole // Convert string to enum
             };
 
             await _registrationRepository.AddAsync(registration);
@@ -71,7 +78,8 @@ namespace TASK_2.Services
             var registrationDto = new RegistrationDto
             {
                 Username = registration.Username,
-                Email = registration.Email
+                Email = registration.Email,
+                Role = registration.Role.ToString()
             };
 
             return new OperationResult<RegistrationDto>(200, "Registration successful.", registrationDto);
