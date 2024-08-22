@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TASK_2.Models;
 
@@ -11,9 +12,11 @@ using TASK_2.Models;
 namespace TASK_2.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240822142205_AddProjectSToRegistration")]
+    partial class AddProjectSToRegistration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -92,7 +95,7 @@ namespace TASK_2.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("TASK_2.models.Registration", "Registration")
-                        .WithMany()
+                        .WithMany("Projects")
                         .HasForeignKey("RegistrationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -105,6 +108,11 @@ namespace TASK_2.Migrations
             modelBuilder.Entity("TASK_2.Models.Project", b =>
                 {
                     b.Navigation("SubProjects");
+                });
+
+            modelBuilder.Entity("TASK_2.models.Registration", b =>
+                {
+                    b.Navigation("Projects");
                 });
 #pragma warning restore 612, 618
         }

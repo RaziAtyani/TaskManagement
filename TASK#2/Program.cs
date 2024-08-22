@@ -8,19 +8,21 @@ using TASK_2.Repositories;
 using TASK_2.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-
-
+builder.Services.AddHttpContextAccessor();
+// Configure DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("UserCon")));
 
-
+// Register repositories
 builder.Services.AddScoped<IRegistrationRepository, RegistrationRepository>();
+builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 
-
+// Register services
 builder.Services.AddScoped<IRegistrationService, RegistrationService>();
+builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<AuthService>();
 
-
+// Configure JWT authentication
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -40,7 +42,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-
+// Configure Swagger
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "TASK#2", Version = "v1" });
@@ -75,7 +77,7 @@ builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
 
-
+// Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -84,7 +86,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication(); 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

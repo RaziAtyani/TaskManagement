@@ -85,7 +85,7 @@ namespace TASK_2.Services
                 return new OperationResult<string>(401, "Invalid username or password.");
             }
 
-            var token = _authService.GenerateToken(user.Username);
+            var token = _authService.GenerateToken(user.Id);
             return new OperationResult<string>(200, "Login successful.", token);
         }
 
