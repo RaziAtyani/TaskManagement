@@ -59,7 +59,7 @@ namespace TASK_2.Services
                 return new OperationResult<RegistrationDto>(409, "Email already in use.");
             }
 
-            var registration = new Registration
+            var registration = new models.User
             {
                 Username = registrationRequest.Username,
                 Password = BCrypt.Net.BCrypt.HashPassword(registrationRequest.Password),

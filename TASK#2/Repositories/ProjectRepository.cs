@@ -26,5 +26,13 @@ namespace TASK_2.Repositories
         {
             return await _dbSet.Where(p => p.ParentProjectId == projectId).ToListAsync();
         }
+
+        public async Task<IEnumerable<Project>> GetProjectsByUserIdAsync(int userId)
+        {
+            return await _dbSet
+                .Where(p => p.RegistrationId == userId)
+                .Include(p => p.SubProjects) // Include subprojects if needed
+                .ToListAsync();
+        }
     }
 }

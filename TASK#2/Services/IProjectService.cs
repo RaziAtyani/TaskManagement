@@ -14,5 +14,9 @@ namespace TASK_2.Services
         Task<OperationResult> DeleteProjectAsync(int projectId);
 
         Task<OperationResult<IEnumerable<ProjectDto>>> GetSubProjectsByProjectIdAsync(int projectId);
+        Task<OperationResult<ProjectDto>> CreateSubProjectAsync(int parentProjectId, ProjectDtoRequest subProjectDto);
+        Task<OperationResult<ProjectDto>> UpdateSubProjectAsync(int subProjectId, ProjectDto subProjectDto);
+        Task<OperationResult> DeleteSubProjectAsync(int subProjectId);
     }
+
 }
