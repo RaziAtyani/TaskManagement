@@ -21,6 +21,13 @@ namespace TASK_2.Models
         {
             base.OnModelCreating(modelBuilder);
 
+            // Seed predefined roles
+            modelBuilder.Entity<Role>().HasData(
+                new Role { Id = 1, Name = "Admin" },
+                new Role { Id = 2, Name = "ProjectLead" },
+                new Role { Id = 3, Name = "Member" }
+            );
+
             // Configure self-referencing relationship for Project
             modelBuilder.Entity<Project>()
                 .HasOne(p => p.ParentProject)

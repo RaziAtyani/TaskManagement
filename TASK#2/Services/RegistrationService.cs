@@ -5,6 +5,7 @@ using TASK_2.Repositories;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using TASK_2.models;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace TASK_2.Services
 {
@@ -63,7 +64,8 @@ namespace TASK_2.Services
             {
                 Username = registrationRequest.Username,
                 Password = BCrypt.Net.BCrypt.HashPassword(registrationRequest.Password),
-                Email = registrationRequest.Email
+                Email = registrationRequest.Email,
+                CreatedAt = DateTime.Now
             };
 
             await _registrationRepository.AddAsync(registration);
