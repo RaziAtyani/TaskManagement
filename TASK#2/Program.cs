@@ -9,6 +9,7 @@ using TASK_2.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpContextAccessor();
+
 // Configure DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("UserCon")));
@@ -16,10 +17,14 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Register repositories
 builder.Services.AddScoped<IRegistrationRepository, RegistrationRepository>();
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
+builder.Services.AddScoped<ITeamRepository, TeamRepository>(); // Register Team repository
+builder.Services.AddScoped<ITeamMemberRepository, TeamMemberRepository>(); // Register TeamMember repository
 
 // Register services
 builder.Services.AddScoped<IRegistrationService, RegistrationService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
+builder.Services.AddScoped<ITeamService, TeamService>(); // Register Team service
+builder.Services.AddScoped<ITeamMemberService, TeamMemberService>(); // Register TeamMember service
 builder.Services.AddScoped<AuthService>();
 
 // Configure JWT authentication
