@@ -90,6 +90,28 @@ namespace TASK_2.Models
                 .WithMany(t => t.SubTasks)
                 .HasForeignKey(t => t.ParentTaskId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            // Configure relationship between Registration and User
+            modelBuilder.Entity<Registration>()
+                .HasOne(r => r.User)
+                .WithMany(u => u.Registrations)
+                .HasForeignKey(r => r.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Configure relationship between Registration and Role
+            modelBuilder.Entity<Registration>()
+                .HasOne(r => r.Role)
+                .WithMany(role => role.Registrations)
+                .HasForeignKey(r => r.RoleId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Configure relationship between Registration and Project
+            modelBuilder.Entity<Registration>()
+                .HasMany(r => r.Projects)
+                .WithOne(p => p.Registration)
+                .HasForeignKey(p => p.RegistrationId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
+
     }
 }
