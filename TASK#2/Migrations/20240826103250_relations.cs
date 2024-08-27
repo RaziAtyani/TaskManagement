@@ -5,7 +5,7 @@
 namespace TASK_2.Migrations
 {
     /// <inheritdoc />
-    public partial class seeds : Migration
+    public partial class relations : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

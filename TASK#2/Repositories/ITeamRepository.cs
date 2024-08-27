@@ -1,10 +1,15 @@
 ﻿using TASK_2.Models;
 
-public interface ITeamRepository
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace TASK_2.Repositories
 {
-    Task<IEnumerable<Team>> GetAllTeamsAsync();
-    Task<Team> GetTeamByIdAsync(int id);
-    Task<Team> AddTeamAsync(Team team);
-    Task UpdateTeamAsync(Team team);
-    Task DeleteTeamAsync(int id);
+    public interface ITeamRepository : IGenericRepository<Team>
+    {
+        Task<IEnumerable<Team>> GetTeamsByProjectIdAsync(int projectId);
+    }
+
+
+
 }

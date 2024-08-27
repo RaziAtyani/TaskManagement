@@ -1,49 +1,70 @@
-﻿using TASK_2.Models;
-using TASK_2.Repositories;
+
+﻿using AutoMapper;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using TASK_2.Common;
+using TASK_2.DTOs;
+using TASK_2.Models;
+using TASK_2.Repositories;
 
-public class TeamMemberService : ITeamMemberService
+namespace TASK_2.Services
 {
-    private readonly ITeamMemberRepository _teamMemberRepository;
-
-    public TeamMemberService(ITeamMemberRepository teamMemberRepository)
+    public class TeamMemberService : ITeamMemberService
     {
-        _teamMemberRepository = teamMemberRepository;
-    }
+        private readonly ITeamMemberRepository _teamMemberRepository;
+        private readonly IMapper _mapper;
 
-    public async Task<IEnumerable<TeamMember>> GetAllTeamMembersAsync()
-    {
-        return await _teamMemberRepository.GetAllTeamMembersAsync();
-    }
+        public TeamMemberService(ITeamMemberRepository teamMemberRepository, IMapper mapper)
+        {
+            _teamMemberRepository = teamMemberRepository;
+            _mapper = mapper;
+        }
 
-    public async Task<TeamMember> GetTeamMemberByIdAsync(int id)
-    {
-        return await _teamMemberRepository.GetTeamMemberByIdAsync(id);
-    }
+        public async Task<OperationResult<TeamMemberResponseDto>> AddTeamMemberAsync(TeamMemberDto teamMemberDto)
+        {
+            var teamMember = _mapper.Map<TeamMember>(teamMemberDto);
+            await _teamMemberRepository.AddAsync(teamMember);
+            var teamMemberResponseDto = _mapper.Map<TeamMemberResponseDto>(teamMember);
+            return new OperationResult<TeamMemberResponseDto>(201, "Team member added successfully", teamMemberResponseDto);
+        }
 
-    public async Task<IEnumerable<TeamMember>> GetTeamMembersByTeamIdAsync(int teamId)
-    {
-        return await _teamMemberRepository.GetTeamMembersByTeamIdAsync(teamId);
-    }
+        public async Task<OperationResult<IEnumerable<TeamMemberResponseDto>>> GetAllTeamMembersAsync()
+        {
+            var teamMembers = await _teamMemberRepository.GetAllAsync();
+            var teamMemberResponseDtos = _mapper.Map<IEnumerable<TeamMemberResponseDto>>(teamMembers);
+            return new OperationResult<IEnumerable<TeamMemberResponseDto>>(200, "Team members retrieved successfully", teamMemberResponseDtos);
+        }
 
-    public async Task<TeamMember> AddTeamMemberAsync(TeamMember teamMember)
-    {
-        return await _teamMemberRepository.AddTeamMemberAsync(teamMember);
-    }
+        public async Task<OperationResult<TeamMemberResponseDto>> GetTeamMemberByIdAsync(int id)
+        {
+            var teamMember = await _teamMemberRepository.GetByIdAsync(id);
+            if (teamMember == null)
+                return new OperationResult<TeamMemberResponseDto>(404, "Team member not found");
 
-    public async Task UpdateTeamMemberAsync(TeamMember teamMember)
-    {
-        await _teamMemberRepository.UpdateTeamMemberAsync(teamMember);
-    }
+            var teamMemberResponseDto = _mapper.Map<TeamMemberResponseDto>(teamMember);
+            return new OperationResult<TeamMemberResponseDto>(200, "Team member retrieved successfully", teamMemberResponseDto);
+        }
 
-    public async Task DeleteTeamMemberAsync(int id)
-    {
-        await _teamMemberRepository.DeleteTeamMemberAsync(id);
-    }
+        public async Task<OperationResult> UpdateTeamMemberAsync(int id, TeamMemberDto teamMemberDto)
+        {
+            var teamMember = await _teamMemberRepository.GetByIdAsync(id);
+            if (teamMember == null)
+                return new OperationResult(404, "Team member not found");
 
-    public async Task<bool> TeamMemberExists(int id)
-    {
-        return await _teamMemberRepository.GetTeamMemberByIdAsync(id) != null;
+            _mapper.Map(teamMemberDto, teamMember);
+            await _teamMemberRepository.UpdateAsync(teamMember);
+            return new OperationResult(200, "Team member updated successfully");
+        }
+
+        public async Task<OperationResult> DeleteTeamMemberAsync(int id)
+        {
+            var teamMember = await _teamMemberRepository.GetByIdAsync(id);
+            if (teamMember == null)
+                return new OperationResult(404, "Team member not found");
+
+            await _teamMemberRepository.DeleteAsync(id);
+            return new OperationResult(200, "Team member deleted successfully");
+        }
+
     }
 }

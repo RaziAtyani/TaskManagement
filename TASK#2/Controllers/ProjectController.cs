@@ -23,12 +23,10 @@ namespace TASK_2.Controllers
         public async Task<IActionResult> CreateProject([FromBody] ProjectDtoRequest projectDto)
         {
             var result = await _projectService.CreateProjectAsync(projectDto);
-            if (result.IsSuccess)
-            {
-                return CreatedAtAction(nameof(GetProject), new { id = result.Data.Id }, result.Data);
-            }
+       
             return StatusCode(result.StatusCode, result.Message);
         }
+
 
         [HttpGet]
         public async Task<IActionResult> GetAllProjects()
@@ -48,10 +46,7 @@ namespace TASK_2.Controllers
         public async Task<IActionResult> UpdateProject(int id, [FromBody] ProjectDto projectDto)
         {
             var result = await _projectService.UpdateProjectAsync(id, projectDto);
-            if (result.IsSuccess)
-            {
-                return Ok(result.Data);
-            }
+        
             return StatusCode(result.StatusCode, result.Message);
         }
 
@@ -59,10 +54,7 @@ namespace TASK_2.Controllers
         public async Task<IActionResult> DeleteProject(int id)
         {
             var result = await _projectService.DeleteProjectAsync(id);
-            if (result.IsSuccess)
-            {
-                return NoContent();
-            }
+         
             return StatusCode(result.StatusCode, result.Message);
         }
 
@@ -77,10 +69,7 @@ namespace TASK_2.Controllers
         public async Task<IActionResult> CreateSubProject(int parentProjectId, [FromBody] ProjectDtoRequest subProjectDto)
         {
             var result = await _projectService.CreateSubProjectAsync(parentProjectId, subProjectDto);
-            if (result.IsSuccess)
-            {
-                return CreatedAtAction(nameof(GetSubProject), new { parentProjectId, subProjectId = result.Data.Id }, result.Data);
-            }
+           
             return StatusCode(result.StatusCode, result.Message);
         }
 
@@ -88,10 +77,7 @@ namespace TASK_2.Controllers
         public async Task<IActionResult> GetSubProject(int parentProjectId, int subProjectId)
         {
             var result = await _projectService.GetProjectAsync(subProjectId);
-            if (result.IsSuccess )
-            {
-                return Ok(result.Data);
-            }
+            
             return StatusCode(result.StatusCode, result.Message);
         }
 
@@ -99,10 +85,7 @@ namespace TASK_2.Controllers
         public async Task<IActionResult> UpdateSubProject(int parentProjectId, int subProjectId, [FromBody] ProjectDto subProjectDto)
         {
             var result = await _projectService.UpdateSubProjectAsync(subProjectId, subProjectDto);
-            if (result.IsSuccess )
-            {
-                return Ok(result.Data);
-            }
+           
             return StatusCode(result.StatusCode, result.Message);
         }
 
@@ -110,10 +93,7 @@ namespace TASK_2.Controllers
         public async Task<IActionResult> DeleteSubProject(int parentProjectId, int subProjectId)
         {
             var result = await _projectService.DeleteSubProjectAsync(subProjectId);
-            if (result.IsSuccess )
-            {
-                return NoContent();
-            }
+          
             return StatusCode(result.StatusCode, result.Message);
         }
     }

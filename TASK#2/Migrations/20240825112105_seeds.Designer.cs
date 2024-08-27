@@ -12,7 +12,7 @@ using TASK_2.Models;
 namespace TASK_2.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240825104645_seeds")]
+    [Migration("20240825112105_seeds")]
     partial class seeds
     {
         /// <inheritdoc />
@@ -103,6 +103,23 @@ namespace TASK_2.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Admin"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "ProjectLead"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Member"
+                        });
                 });
 
             modelBuilder.Entity("TASK_2.Models.Tasks", b =>

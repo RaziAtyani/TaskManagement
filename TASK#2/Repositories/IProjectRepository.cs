@@ -11,7 +11,10 @@ namespace TASK_2.Repositories
         Task<Project> GetProjectWithSubProjectsAsync(int projectId);
         Task<IEnumerable<Project>> GetSubProjectsByProjectIdAsync(int projectId);
 
-        // New method to get projects for a specific user
+        // Method to get projects for a specific user
         Task<IEnumerable<Project>> GetProjectsByUserIdAsync(int userId);
+
+        // New method to get a project associated with a specific team ID
+        Task<Project> GetProjectByTeamIdAsync(int teamId);
     }
 }

@@ -36,6 +36,8 @@ namespace TASK_2.Repositories
         public async Task UpdateAsync(TEntity entity)
         {
             _dbSet.Update(entity);
+            await _context.SaveChangesAsync();
+
         }
 
         public async Task DeleteAsync(int id)
@@ -45,6 +47,7 @@ namespace TASK_2.Repositories
             {
                 _dbSet.Remove(entity);
             }
+            await _context.SaveChangesAsync();
         }
     }
 }

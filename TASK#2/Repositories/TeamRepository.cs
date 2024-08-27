@@ -1,45 +1,21 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TASK_2.Models;
 
-public class TeamRepository : ITeamRepository
+namespace TASK_2.Repositories
 {
-    private readonly ApplicationDbContext _context;
-
-    public TeamRepository(ApplicationDbContext context)
+    public class TeamRepository : GenericRepository<Team>, ITeamRepository
     {
-        _context = context;
-    }
-
-    public async Task<IEnumerable<Team>> GetAllTeamsAsync()
-    {
-        return await _context.Teams.ToListAsync();
-    }
-
-    public async Task<Team> GetTeamByIdAsync(int id)
-    {
-        return await _context.Teams.FindAsync(id);
-    }
-
-    public async Task<Team> AddTeamAsync(Team team)
-    {
-        _context.Teams.Add(team);
-        await _context.SaveChangesAsync();
-        return team;
-    }
-
-    public async Task UpdateTeamAsync(Team team)
-    {
-        _context.Entry(team).State = EntityState.Modified;
-        await _context.SaveChangesAsync();
-    }
-
-    public async Task DeleteTeamAsync(int id)
-    {
-        var team = await _context.Teams.FindAsync(id);
-        if (team != null)
+        public TeamRepository(ApplicationDbContext context) : base(context)
         {
-            _context.Teams.Remove(team);
-            await _context.SaveChangesAsync();
         }
+
+        // You can add methods specific to Team management if needed
+        public async Task<IEnumerable<Team>> GetTeamsByProjectIdAsync(int projectId)
+        {
+            return await _dbSet.Where(t => t.ProjectId == projectId).ToListAsync();
+        }
+
+        // Other team-specific methods can be added here
+
     }
 }
