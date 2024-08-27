@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TASK_2.Models;
 
+
 namespace TASK_2.Repositories
 {
     public class TeamMemberRepository : GenericRepository<TeamMember>, ITeamMemberRepository
@@ -28,5 +29,6 @@ namespace TASK_2.Repositories
         }
 
         // Other team member-specific methods can be added here
+
     }
 }

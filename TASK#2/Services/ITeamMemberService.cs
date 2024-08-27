@@ -1,3 +1,4 @@
+
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using TASK_2.DTOs;
@@ -13,4 +14,5 @@ namespace TASK_2.Services
         Task<OperationResult> UpdateTeamMemberAsync(int id, TeamMemberDto teamMemberDto);
         Task<OperationResult> DeleteTeamMemberAsync(int id);
     }
+
 }

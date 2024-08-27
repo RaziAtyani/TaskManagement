@@ -1,3 +1,4 @@
+
 ﻿using AutoMapper;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -64,5 +65,6 @@ namespace TASK_2.Services
             await _teamMemberRepository.DeleteAsync(id);
             return new OperationResult(200, "Team member deleted successfully");
         }
+
     }
 }
