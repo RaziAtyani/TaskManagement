@@ -34,5 +34,13 @@ namespace TASK_2.Repositories
                 .Include(p => p.SubProjects) // Include subprojects if needed
                 .ToListAsync();
         }
+
+        // New method to get the project associated with a team
+        public async Task<Project> GetProjectByTeamIdAsync(int teamId)
+        {
+            return await _dbSet
+                .Include(p => p.Teams) // Ensure to include teams
+                .FirstOrDefaultAsync(p => p.Teams.Any(t => t.Id == teamId));
+        }
     }
 }
