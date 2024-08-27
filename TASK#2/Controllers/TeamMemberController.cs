@@ -1,81 +1,111 @@
-﻿// TeamMemberController.cs
-using Microsoft.AspNetCore.Mvc;
-using TASK_2.Models;
+﻿using Microsoft.AspNetCore.Mvc;
 using TASK_2.DTOs;
+using TASK_2.Models;
+using TASK_2.Services;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 [Route("api/[controller]")]
 [ApiController]
 public class TeamMemberController : ControllerBase
 {
-    private readonly ApplicationDbContext _context;
+    private readonly ITeamMemberService _teamMemberService;
 
-    public TeamMemberController(ApplicationDbContext context)
+    public TeamMemberController(ITeamMemberService teamMemberService)
     {
-        _context = context;
+        _teamMemberService = teamMemberService;
     }
 
     [HttpGet]
-    public IActionResult GetAllTeamMembers()
+    public async Task<ActionResult<IEnumerable<TeamMemberDto>>> GetAllTeamMembers()
     {
-        var teamMembers = _context.TeamMembers.Select(tm => new TeamMemberDto()
+        var teamMembers = await _teamMemberService.GetAllTeamMembersAsync();
+        return Ok(teamMembers.Select(tm => new TeamMemberDto
         {
             Id = tm.Id,
-            TeamId = tm.TeamId,
             UserId = tm.UserId,
+            TeamId = tm.TeamId,
             RoleId = tm.RoleId
-        }).ToList();
-
-        return Ok(teamMembers);
+        }).ToList());
     }
 
     [HttpGet("{id}")]
-    public IActionResult GetTeamMemberById(int id)
+    public async Task<ActionResult<TeamMemberDto>> GetTeamMemberById(int id)
     {
-        var teamMember = _context.TeamMembers.FirstOrDefault(tm => tm.Id == id);
-        if (teamMember == null) return NotFound();
+        var teamMember = await _teamMemberService.GetTeamMemberByIdAsync(id);
+        if (teamMember == null)
+        {
+            return NotFound();
+        }
 
-        return Ok(teamMember);
+        return Ok(new TeamMemberDto
+        {
+            Id = teamMember.Id,
+            UserId = teamMember.UserId,
+            TeamId = teamMember.TeamId,
+            RoleId = teamMember.RoleId
+        });
     }
 
     [HttpPost]
-    public IActionResult CreateTeamMember(CreateTeamMemberDto tmDto)
+    public async Task<IActionResult> AddTeamMember([FromBody] CreateTeamMemberDto teamMemberDto)
     {
-        var teamMember = new TeamMember
+        var newTeamMember = await _teamMemberService.AddTeamMemberAsync(new TeamMember
         {
-            TeamId = tmDto.TeamId,
-            UserId = tmDto.UserId,
-            RoleId = tmDto.RoleId
-        };
+            UserId = teamMemberDto.UserId,
+            TeamId = teamMemberDto.TeamId,
+            RoleId = teamMemberDto.RoleId
+        });
 
-        _context.TeamMembers.Add(teamMember);
-        _context.SaveChanges();
-
-        return CreatedAtAction(nameof(GetTeamMemberById), new { id = teamMember.Id }, teamMember);
+        return CreatedAtAction(nameof(GetTeamMemberById), new { id = newTeamMember.Id }, newTeamMember);
     }
 
     [HttpPut("{id}")]
-    public IActionResult UpdateTeamMember(int id, UpdateTeamMemberDto tmDto)
+    public async Task<IActionResult> UpdateTeamMember(int id, [FromBody] UpdateTeamMemberDto teamMemberDto)
     {
-        var teamMember = _context.TeamMembers.FirstOrDefault(tm => tm.Id == id);
-        if (teamMember == null) return NotFound();
+        var teamMember = await _teamMemberService.GetTeamMemberByIdAsync(id);
+        if (teamMember == null)
+        {
+            return NotFound();
+        }
 
-        teamMember.TeamId = tmDto.TeamId;
-        teamMember.UserId = tmDto.UserId;
-        teamMember.RoleId = tmDto.RoleId;
+        teamMember.UserId = teamMemberDto.UserId;
+        teamMember.TeamId = teamMemberDto.TeamId;
+        teamMember.RoleId = teamMemberDto.RoleId;
 
-        _context.SaveChanges();
+        await _teamMemberService.UpdateTeamMemberAsync(teamMember);
+
         return NoContent();
     }
 
     [HttpDelete("{id}")]
-    public IActionResult DeleteTeamMember(int id)
+    public async Task<IActionResult> DeleteTeamMember(int id)
     {
-        var teamMember = _context.TeamMembers.FirstOrDefault(tm => tm.Id == id);
-        if (teamMember == null) return NotFound();
+        if (!await _teamMemberService.TeamMemberExists(id))
+        {
+            return NotFound();
+        }
 
-        _context.TeamMembers.Remove(teamMember);
-        _context.SaveChanges();
-
+        await _teamMemberService.DeleteTeamMemberAsync(id);
         return NoContent();
+    }
+
+    [HttpGet("ByTeam/{teamId}")]
+    public async Task<ActionResult<IEnumerable<TeamMemberDto>>> GetTeamMembersByTeamId(int teamId)
+    {
+        var teamMembers = await _teamMemberService.GetTeamMembersByTeamIdAsync(teamId);
+        if (teamMembers == null || !teamMembers.Any())
+        {
+            return NotFound($"No team members found for team ID {teamId}.");
+        }
+
+        return Ok(teamMembers.Select(tm => new TeamMemberDto
+        {
+            Id = tm.Id,
+            UserId = tm.UserId,
+            TeamId = tm.TeamId,
+            RoleId = tm.RoleId
+        }).ToList());
     }
 }

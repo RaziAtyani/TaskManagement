@@ -1,4 +1,7 @@
 ﻿using TASK_2.Models;
+using TASK_2.Repositories;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 public class TeamMemberService : ITeamMemberService
 {
@@ -19,7 +22,12 @@ public class TeamMemberService : ITeamMemberService
         return await _teamMemberRepository.GetTeamMemberByIdAsync(id);
     }
 
-    public async Task<TeamMember> CreateTeamMemberAsync(TeamMember teamMember)
+    public async Task<IEnumerable<TeamMember>> GetTeamMembersByTeamIdAsync(int teamId)
+    {
+        return await _teamMemberRepository.GetTeamMembersByTeamIdAsync(teamId);
+    }
+
+    public async Task<TeamMember> AddTeamMemberAsync(TeamMember teamMember)
     {
         return await _teamMemberRepository.AddTeamMemberAsync(teamMember);
     }
@@ -32,5 +40,10 @@ public class TeamMemberService : ITeamMemberService
     public async Task DeleteTeamMemberAsync(int id)
     {
         await _teamMemberRepository.DeleteTeamMemberAsync(id);
+    }
+
+    public async Task<bool> TeamMemberExists(int id)
+    {
+        return await _teamMemberRepository.GetTeamMemberByIdAsync(id) != null;
     }
 }

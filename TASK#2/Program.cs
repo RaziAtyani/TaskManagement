@@ -19,12 +19,15 @@ builder.Services.AddScoped<IRegistrationRepository, RegistrationRepository>();
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 builder.Services.AddScoped<ITeamRepository, TeamRepository>(); // Register Team repository
 builder.Services.AddScoped<ITeamMemberRepository, TeamMemberRepository>(); // Register TeamMember repository
+builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 
 // Register services
 builder.Services.AddScoped<IRegistrationService, RegistrationService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<ITeamService, TeamService>(); // Register Team service
 builder.Services.AddScoped<ITeamMemberService, TeamMemberService>(); // Register TeamMember service
+builder.Services.AddScoped<ITaskService, TaskService>();
+
 builder.Services.AddScoped<AuthService>();
 
 // Configure JWT authentication
