@@ -2,6 +2,8 @@
 
 namespace TASK_2.Models
 {
+   
+
     public class Registration
     {
         public int Id { get; set; }
@@ -13,5 +15,6 @@ namespace TASK_2.Models
         public User User { get; set; }
         public Role Role { get; set; }
         public ICollection<Project> Projects { get; set; }
+
     }
 }

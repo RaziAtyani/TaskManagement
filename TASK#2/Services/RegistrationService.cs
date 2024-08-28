@@ -60,12 +60,15 @@ namespace TASK_2.Services
                 return new OperationResult<RegistrationDto>(409, "Email already in use.");
             }
 
+
             // Create the new user entry
             var user = new User
+
             {
                 Username = registrationRequest.Username,
                 Password = BCrypt.Net.BCrypt.HashPassword(registrationRequest.Password),
                 Email = registrationRequest.Email,
+
                 CreatedAt = DateTime.Now
             };
 
@@ -84,6 +87,7 @@ namespace TASK_2.Services
                 UserId = user.Id,
                 RoleId = projectLeadRole.Id,
                 CreatedAt = DateTime.Now
+
             };
 
             await _registrationRepository.AddRegistrationAsync(registration);
@@ -91,8 +95,10 @@ namespace TASK_2.Services
             // Prepare the response DTO
             var registrationDto = new RegistrationDto
             {
+
                 Username = user.Username,
                 Email = user.Email,
+
             };
 
             return new OperationResult<RegistrationDto>(200, "Registration successful.", registrationDto);
