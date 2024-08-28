@@ -5,6 +5,7 @@ using TASK_2.Repositories;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using TASK_2.models;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace TASK_2.Services
 {
@@ -59,26 +60,50 @@ namespace TASK_2.Services
                 return new OperationResult<RegistrationDto>(409, "Email already in use.");
             }
 
-           
 
-            var registration = new Registration
+            // Create the new user entry
+            var user = new User
+
             {
                 Username = registrationRequest.Username,
                 Password = BCrypt.Net.BCrypt.HashPassword(registrationRequest.Password),
                 Email = registrationRequest.Email,
+
+                CreatedAt = DateTime.Now
             };
 
-            await _registrationRepository.AddAsync(registration);
+            // Add the user to the database
+            await _registrationRepository.AddAsync(user);
 
+            // Assign the user to the "ProjectLead" role
+            var projectLeadRole = await _registrationRepository.GetRoleByNameAsync("ProjectLead");
+            if (projectLeadRole == null)
+            {
+                return new OperationResult<RegistrationDto>(500, "Default role 'ProjectLead' not found.");
+            }
+
+            var registration = new Registration
+            {
+                UserId = user.Id,
+                RoleId = projectLeadRole.Id,
+                CreatedAt = DateTime.Now
+
+            };
+
+            await _registrationRepository.AddRegistrationAsync(registration);
+
+            // Prepare the response DTO
             var registrationDto = new RegistrationDto
             {
-                Username = registration.Username,
-                Email = registration.Email,
-                
+
+                Username = user.Username,
+                Email = user.Email,
+
             };
 
             return new OperationResult<RegistrationDto>(200, "Registration successful.", registrationDto);
         }
+
 
         public OperationResult<string> Login(LoginModel loginModel)
         {
@@ -88,7 +113,7 @@ namespace TASK_2.Services
                 return new OperationResult<string>(401, "Invalid username or password.");
             }
 
-            var token = _authService.GenerateToken(user.Username);
+            var token = _authService.GenerateToken(user.Id);
             return new OperationResult<string>(200, "Login successful.", token);
         }
 

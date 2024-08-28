@@ -43,14 +43,6 @@ namespace TASK_2.Controllers
         }
 
 
-        [Authorize]
-        [HttpGet]
-        [Route("protected-data")]
-        public IActionResult GetProtectedData()
-        {
-            
-            return Ok(new { message = "This is a protected data endpoint." });
-        }
 
     }
 }
